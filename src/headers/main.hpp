@@ -14,12 +14,11 @@ int main(int argc, char *args[]) {
         int dt = 0;
         float avgFPS = 0;
 
+        for (auto &i : stars) {
+            i = {(int)randF(0, SCREEN_WIDTH - 3), (int)randF(0, SCREEN_HEIGHT - 3)};
+        }
+
         fpsTimer.start();
-
-        Ship *ship = new Ship(window.getWidth() / 2,window.getHeight() / 2);
-
-        //x = direction, y = speed
-        SDL_Point mod = {0,0};
 
         // Texture text = Texture(window.windowP, window.rendererP);
         // text.loadFromFile("resources/Textures/dot.bmp");
@@ -34,33 +33,33 @@ int main(int argc, char *args[]) {
                 } else {
                     window.handleEvent(e);
                 }
-                if (e.type == SDL_KEYDOWN && e.key.repeat == 0) {
-                    mod = {0,0};
-                    if (e.key.keysym.sym == SDLK_UP){
-                        mod.y += -2;
-                    }
-                    if (e.key.keysym.sym == SDLK_DOWN){
-                        mod.y += 2;
-                    }
-                    if (e.key.keysym.sym == SDLK_LEFT){
-                        mod.x += -2;
-                    }
-                    if (e.key.keysym.sym == SDLK_RIGHT){
-                        mod.x += 2;
-                    }
-                }
             }
 
-            printf("%i\n", dt);
+            const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+            if(currentKeyStates[SDL_SCANCODE_ESCAPE]) {
+                running = false;
+            }
+            if(currentKeyStates[SDL_SCANCODE_UP]) {
+                ship->updateVelocity();
+            }
+            if(currentKeyStates[SDL_SCANCODE_RIGHT]) {
+                ship->updateAngle(true);
+            }
+            if(currentKeyStates[SDL_SCANCODE_LEFT]) {
+                ship->updateAngle(false);
+            }
 
             float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
             if(avgFPS > 240) {
                 avgFPS = 0;
             }
 
-            ship->move(mod, dt);
-
+            ship->update();
+            
             window.clearRenderer();
+
+            SDL_SetRenderDrawColor(window.rendererP, 0xff, 0xff, 0xff, 0xff);
+            SDL_RenderDrawPoints(window.rendererP, stars, starAmmt);
 
             ship->render(window.rendererP);
 
@@ -70,7 +69,7 @@ int main(int argc, char *args[]) {
             
             frameTicks = frameTimer.getTicks();
             if (frameTicks < SCREEN_TICK_PER_FRAME) {
-                SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
+                SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks - 1);
             }
         }
     }

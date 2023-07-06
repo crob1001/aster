@@ -1,6 +1,8 @@
 //static
 static std::string PNAME = "aster";
 
+static const double dtr = 0.01745329251994329576923690768489;
+
 SDL_RendererFlags RENDERMETHOD = SDL_RENDERER_ACCELERATED;
 
 enum States {
@@ -30,7 +32,7 @@ enum SCREEN_RESOLUTION_ENUM {
     TOTAL_RESOLUTIONS
 };
 
-int RESOLUTION = 0;
+int RESOLUTION = 1;
 
 //screen/level size
 int SCREEN_WIDTH = SCREEN_RESOLUTION[RESOLUTION][0];
@@ -47,6 +49,9 @@ float SCREEN_TICK_PER_FRAME = 1000 / SCREEN_FPS;
 
 //
 SDL_Color colorKey = {0, 0xFF, 0xFF};
-SDL_Color backgroundColor = {0x26, 0x1a, 0x3d, 0xff};
+SDL_Color backgroundColor = {0x25, 0x19, 0x3c, 0xfe};
 
 States CURRENTSTATE = RUNNING;
+
+int starAmmt = 15;
+SDL_Point stars[15];

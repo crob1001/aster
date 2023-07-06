@@ -11,13 +11,13 @@ INCLUDE_PATHS = -IC:/mingwDevLibs/include
 LIBRARY_PATHS = -LC:/mingwDevLibs/lib
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
-COMPILER_FLAGS = -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic # -w -Wl,-subsystem,windows
+COMPILER_FLAGS = -Wl,-Bdynamic -w -Wl,-subsystem,windows
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -static-libgcc -static-libstdc++ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = out/main
+OBJ_NAME = out/aster
 
 #This is the target that compiles our executable
 all : $(OBJS)
