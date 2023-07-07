@@ -1,11 +1,3 @@
-float rotatex(float angle, float x, float y, float cx, float cy) {
-    return cos(angle * dtr) * (x - cx) - sin(angle * dtr) * (y - cy) + cx;
-}
-
-float rotatey(float angle, float x, float y, float cx, float cy) {
-    return sin(angle * dtr) * (x - cx) + cos(angle * dtr) * (y - cy) + cy;
-}
-
 class Ship {
     public:
         Ship(float x, float y);
@@ -18,12 +10,16 @@ class Ship {
 
         void shoot();
 
+        void killB(int i);
+
         void render(SDL_Renderer *renderer);
+
+        std::vector<Bullet*> blist;
 
     private:
         float cooldown = 0;
-        float rotSpeed = 6;
-        float velocity = .2;
+        float rotSpeed = 5;
+        float velocity = .1;
         float angle = -90;
         float size = 10;
         float vx = 0;
@@ -33,24 +29,35 @@ class Ship {
 };
 
 void Ship::render(SDL_Renderer *renderer) {
-
     //add 90 to set origin angle to 90
-    SDL_Vertex vertex_1 = {{rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)}, {0x4d, 0x4d, 0xff, 255}};
-    SDL_Vertex vertex_2 = {{rotatex(angle + 90, x + size, y + size, x, y), rotatey(angle + 90, x + size, y + size, x, y)}, {0xe4, 0xe3, 0xff, 255}};
-    SDL_Vertex vertex_3 = {{rotatex(angle + 90, x - size, y + size, x, y), rotatey(angle + 90, x - size, y + size, x, y)}, {0xe4, 0xe3, 0xff, 255}};
+    SDL_FPoint point_1 = {rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)};
+    SDL_FPoint point_2 = {rotatex(angle + 90, x + size, y + size, x, y), rotatey(angle + 90, x + size, y + size, x, y)};
+    SDL_FPoint point_3 = {rotatex(angle + 90, x - size, y + size, x, y), rotatey(angle + 90, x - size, y + size, x, y)};
 
-    SDL_Vertex vertices[] = {
-        vertex_1,
-        vertex_2,
-        vertex_3
+    SDL_FPoint points[] = {
+        point_1,
+        point_2,
+        point_3,
+        point_1
     };
 
-    SDL_RenderGeometry(renderer, NULL, vertices, 3, NULL, 0);
+    for (Bullet *i : blist) {
+        i->render(renderer);
+    }
+
+    SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+    SDL_RenderDrawLinesF(renderer, points, 4);
+}
+
+void Ship::killB(int i) {
+    delete blist[i];
+    blist.erase(blist.begin() + i);
 }
 
 void Ship::shoot() {
     if (cooldown <= 0) {
         blist.push_back(new Bullet(x, y, angle, vx, vy));
+        cooldown = 10;
     }
 }
 
@@ -68,9 +75,6 @@ void Ship::updateVelocity() {
 }
 
 void Ship::update() {
-    if (cooldown > 0) {
-        cooldown -= 1;
-    }
     x = x + vx;
     y = y + vy;
     if (x > SCREEN_WIDTH) {
@@ -81,6 +85,16 @@ void Ship::update() {
         y = 0;
     } if (y < 0) {
         y = SCREEN_HEIGHT;
+    }
+
+    for (int i = 0; i < blist.size(); i++) {
+        if (blist[i]->update()) {
+            killB(i);
+        }
+    }
+
+    if (cooldown > 0) {
+        cooldown -= 1;
     }
 }
 

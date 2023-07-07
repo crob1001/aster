@@ -1,34 +1,45 @@
 class Bullet {
     public:
+        float x, y;
+        int size = 4;
+
         Bullet(float x, float y, float angle, float vx, float vy);
 
+        bool update();
+
+        void render(SDL_Renderer *renderer);
+
+    private:
         void updateVelocity();
-
-        void update();
-
         float velocity = 1;
         float vx, vy;
         float angle;
-        float x, y;
 };
+
+void Bullet::render(SDL_Renderer *renderer) {
+    SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0xff);
+    SDL_RenderFillRect(renderer, new SDL_Rect({(int)x - (size / 2), (int)y - (size / 2), size ,size}));
+}
 
 void Bullet::updateVelocity() {
     vx = vx + cos(angle * dtr) * velocity;
     vy = vy + sin(angle * dtr) * velocity;
 }
 
-void Bullet::update() {
+bool Bullet::update() {
     updateVelocity();
     x = x + vx;
     y = y + vy;
     if (x > SCREEN_WIDTH) {
-        x = 0;
+        return true;
     } if (x < 0) {
-        x = SCREEN_WIDTH;
+        return true;
     } if (y > SCREEN_HEIGHT) {
-        y = 0;
+        return true;
     } if (y < 0) {
-        y = SCREEN_HEIGHT;
+        return true;
+    } else {
+        return false;
     }
 }
 
