@@ -12,11 +12,21 @@ class Ship {
 
         void killB(int i);
 
+        float getX();
+
+        float getY();
+
+        float getSize();
+
         void render(SDL_Renderer *renderer);
+
+        void kill();
 
         std::vector<Bullet*> blist;
 
     private:
+        int lives = 5;
+        int invin = 0;
         float cooldown = 0;
         float rotSpeed = 5;
         float velocity = .1;
@@ -28,25 +38,47 @@ class Ship {
         float y, x;
 };
 
-void Ship::render(SDL_Renderer *renderer) {
-    //add 90 to set origin angle to 90
-    SDL_FPoint point_1 = {rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)};
-    SDL_FPoint point_2 = {rotatex(angle + 90, x + size, y + size, x, y), rotatey(angle + 90, x + size, y + size, x, y)};
-    SDL_FPoint point_3 = {rotatex(angle + 90, x - size, y + size, x, y), rotatey(angle + 90, x - size, y + size, x, y)};
+void Ship::kill() {
+    if (invin <= 0) {
+        lives -= 1;
+        if (lives <= 0) {
+            CURRENTSTATE = LOSE;
+        }
+        invin = 20;
+    }
+}
 
+void Ship::render(SDL_Renderer *renderer) {
+    //add 90 to correct for upsidedown render graph
     SDL_FPoint points[] = {
-        point_1,
-        point_2,
-        point_3,
-        point_1
+        {rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)},
+        {rotatex(angle + 90, x + size, y + size, x, y), rotatey(angle + 90, x + size, y + size, x, y)},
+        {rotatex(angle + 90, x - size, y + size, x, y), rotatey(angle + 90, x - size, y + size, x, y)},
+        {rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)}
     };
 
     for (Bullet *i : blist) {
         i->render(renderer);
     }
 
-    SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+    if (invin % 2 == 0){
+        SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+    } else {
+        SDL_SetRenderDrawColor(renderer, 0xff, 0x0, 0x0, 0xff);
+    }
     SDL_RenderDrawLinesF(renderer, points, 4);
+}
+
+float Ship::getSize(){
+    return size / 2;
+}
+
+float Ship::getX(){
+    return x;
+}
+
+float Ship::getY(){
+    return y;
 }
 
 void Ship::killB(int i) {
@@ -85,6 +117,10 @@ void Ship::update() {
         y = 0;
     } if (y < 0) {
         y = SCREEN_HEIGHT;
+    }
+    
+    if (invin > 0) {
+        invin -= 1;
     }
 
     for (int i = 0; i < blist.size(); i++) {

@@ -1,7 +1,5 @@
 void close() {
     window.free();
-
-    TTF_Quit();
-    IMG_Quit();
+    // TTF_Quit();
     SDL_Quit();
 }

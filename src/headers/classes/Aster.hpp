@@ -1,20 +1,26 @@
 class Aster {
     public:
-        float size;
-        float y, x;
 
         Aster();
 
         void update();
 
-        void updateVelocity();
+        // void updateVelocity();
 
-        void shatter();
+        // void shatter();
+
+        float getX();
+
+        float getY();
+
+        float getSize();
 
         void render(SDL_Renderer *renderer);
 
     private:
         SDL_FPoint points[6];
+        float size;
+        float y, x;
         float rotSpeed;
         float angle;
         float vx = 0;
@@ -22,19 +28,44 @@ class Aster {
 };
 
 void Aster::render(SDL_Renderer *renderer) {
-    //add 90 to set origin angle to 90
     SDL_FPoint points[] = {
-        {rotatex(angle + 90, x + size, y, x, y), rotatey(angle + 90, x + size, y, x, y)},
-        {rotatex(angle + 90, x + (size * cos(60)), y + (size * sin(60)), x, y), rotatey(angle + 90, x + (size * cos(60)), y + (size * sin(60)), x, y)},
-        {rotatex(angle + 90, x + (size * cos(120)), y + (size + sin(120)), x, y), rotatey(angle + 90, x + (size * cos(120)), y + (size + sin(120)), x, y)},
-        {rotatex(angle + 90, x - size, y, x, y), rotatey(angle + 90, x - size, y, x, y)},
-        {rotatex(angle + 90, x - (size * cos(240)), y + (size * sin(240)), x, y), rotatey(angle + 90, x - (size * cos(240)), y - (size * sin(240)), x, y)},
-        {rotatex(angle + 90, x - (size * cos(300)), y + (size * sin(300)), x, y), rotatey(angle + 90, x - (size * cos(300)), y - (size * sin(300)), x, y)},
-        {rotatex(angle + 90, x + size, y, x, y), rotatey(angle + 90, x + size, y, x, y)}
+        {rotatex(angle, x + (size * cos(0 * dtr)), y + (size * sin(0 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(0 * dtr)), y + (size * sin(0 * dtr)), x, y)},
+        {rotatex(angle, x + (size * cos(60 * dtr)), y + (size * sin(60 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(60 * dtr)), y + (size * sin(60 * dtr)), x, y)},
+        {rotatex(angle, x + (size * cos(120 * dtr)), y + (size * sin(120 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(120 * dtr)), y + (size * sin(120 * dtr)), x, y)},
+        {rotatex(angle, x + (size * cos(180 * dtr)), y + (size * sin(180 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(180 * dtr)), y + (size * sin(180 * dtr)), x, y)},
+        {rotatex(angle, x + (size * cos(240 * dtr)), y + (size * sin(240 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(240 * dtr)), y + (size * sin(240 * dtr)), x, y)},
+        {rotatex(angle, x + (size * cos(300 * dtr)), y + (size * sin(300 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(300 * dtr)), y + (size * sin(300 * dtr)), x, y)},
+        {rotatex(angle, x + (size * cos(0 * dtr)), y + (size * sin(0 * dtr)), x, y), 
+            rotatey(angle, x + (size * cos(0 * dtr)), y + (size * sin(0 * dtr)), x, y)}
+        // {x + (size * cos(0 * dtr)), y + (size * sin(0 * dtr))},
+        // {x + (size * cos(60 * dtr)), y + (size * sin(60 * dtr))},
+        // {x + (size * cos(120 * dtr)), y + (size * sin(120 * dtr))},
+        // {x + (size * cos(180 * dtr)), y + (size * sin(180 * dtr))},
+        // {x + (size * cos(240 * dtr)), y + (size * sin(240 * dtr))},
+        // {x + (size * cos(300 * dtr)), y + (size * sin(300 * dtr))},
+        // {x + (size * cos(0 * dtr)), y + (size * sin(0 * dtr))}
     };
 
     SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     SDL_RenderDrawLinesF(renderer, points, 7);
+}
+
+float Aster::getSize(){
+    return size;
+}
+
+float Aster::getX(){
+    return x;
+}
+
+float Aster::getY(){
+    return y;
 }
 
 void Aster::update() {
@@ -55,16 +86,16 @@ void Aster::update() {
 Aster::Aster() {
     switch ((int)randF(1,5)) {
         case 1:
-            size = 10;
-            break;
-        case 2:
             size = 20;
             break;
-        case 3:
+        case 2:
             size = 30;
             break;
-        case 4:
+        case 3:
             size = 40;
+            break;
+        case 4:
+            size = 50;
             break;
     }
     switch ((int)randF(1, 5)) {
@@ -87,6 +118,6 @@ Aster::Aster() {
     }
     vx = randF(-3, 4);
     vy = randF(-3, 4);
-    rotSpeed = randF(0, 2);
+    rotSpeed = randF(0, 1.5);
     angle = randF(0, 361);
 }
