@@ -1,8 +1,15 @@
 int main(int argc, char *args[]) {
-
     if (!init()) {
         printf("main/init\n");
     } else {
+
+        SDL_SetWindowFullscreen(window.windowP, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_MaximizeWindow(window.windowP);
+
+        SDL_DisplayMode DM;
+        SDL_GetCurrentDisplayMode(0, &DM);
+        SCREEN_WIDTH = DM.w;
+        SCREEN_HEIGHT = DM.h;
 
         // while (CURRENTSTATE != CLOSED) {
             SDL_Event e;
@@ -18,7 +25,7 @@ int main(int argc, char *args[]) {
 
             Uint16 asterrate = 0;
 
-            Ship *ship = new Ship(window.getWidth() / 2, window.getHeight() / 2);
+            Ship *ship = new Ship(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
             std::vector<Aster*> aster= {
                 new Aster(),
@@ -37,7 +44,7 @@ int main(int argc, char *args[]) {
 
             fpsTimer.start();
 
-            while (CURRENTSTATE != LOSE) {
+            while (CURRENTSTATE != LOSE && CURRENTSTATE != CLOSED) {
                 frameTimer.start();
                 dt = (frameTicks - frameTimer.getTicks() / 1000.f);
 
@@ -71,11 +78,8 @@ int main(int argc, char *args[]) {
                     avgFPS = 0;
                 }
 
-                if (asterrate > 0) {
-                    asterrate -= 1;
-                } else {
+                if (aster.size() < 10) {
                     aster.push_back(new Aster());
-                    asterrate = 120;
                 }
 
                 //collision detect
@@ -93,6 +97,22 @@ int main(int argc, char *args[]) {
                         if (((aster[i]->getX() + aster[i]->getSize()) >= (ship->blist[j]->x + ship->blist[j]->size) && (aster[i]->getX() - aster[i]->getSize()) <= (ship->blist[j]->x - ship->blist[j]->size))) {
                             if (((aster[i]->getY() + aster[i]->getSize()) >= (ship->blist[j]->y + ship->blist[j]->size) && (aster[i]->getY() - aster[i]->getSize()) <= (ship->blist[j]->y - ship->blist[j]->size))) {
                                 ship->killB(j);
+                                //no clue why but looping breaks this
+                                if (aster[i]->getSize() == 50) {
+                                    aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                    aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                    aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));                                    
+                                } 
+                                if (aster[i]->getSize() == 40) {
+                                    aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                    aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                    aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                }
+                                if (aster[i]->getSize() == 30) {
+                                    aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                    aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                    aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
+                                }
                                 delete aster[i];
                                 aster.erase(aster.begin() + i);
                             }
@@ -105,7 +125,6 @@ int main(int argc, char *args[]) {
                 for (auto *i : aster) {
                     i->update();
                 }
-
                 
                 window.clearRenderer();
 

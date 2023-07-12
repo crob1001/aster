@@ -1,13 +1,19 @@
 class Aster {
     public:
 
-        Aster();
+        Aster(int size, float x, float y, float vx, float vy);
+
+        Aster(int size);
 
         void update();
 
         // void updateVelocity();
 
         // void shatter();
+
+        float getVX();
+
+        float getVY();
 
         float getX();
 
@@ -60,6 +66,14 @@ float Aster::getSize(){
     return size;
 }
 
+float Aster::getVX(){
+    return vx;
+}
+
+float Aster::getVY(){
+    return vy;
+}
+
 float Aster::getX(){
     return x;
 }
@@ -72,32 +86,28 @@ void Aster::update() {
     angle += rotSpeed;
     x = x + vx;
     y = y + vy;
-    if (x > SCREEN_WIDTH) {
+    if (x > SCREEN_WIDTH + size) {
         x = 0;
     } if (x < 0) {
         x = SCREEN_WIDTH;
-    } if (y > SCREEN_HEIGHT) {
+    } if (y > SCREEN_HEIGHT + size) {
         y = 0;
     } if (y < 0) {
         y = SCREEN_HEIGHT;
     }
 }
 
-Aster::Aster() {
-    switch ((int)randF(1,5)) {
-        case 1:
-            size = 20;
-            break;
-        case 2:
-            size = 30;
-            break;
-        case 3:
-            size = 40;
-            break;
-        case 4:
-            size = 50;
-            break;
-    }
+Aster::Aster(int size, float x, float y, float vx, float vy) {
+    this->x = x;
+    this->y = y;
+    this->size = size;
+    this->vx = vx * randF(0.5, 1);
+    this->vy = vy * randF(0.5, 1);
+    rotSpeed = randF(0, 1.5);
+    angle = randF(0, 361);
+}
+
+Aster::Aster(int size = (int)randF(2,5) * 10) {
     switch ((int)randF(1, 5)) {
         case 1:
             x = 0;
@@ -116,6 +126,7 @@ Aster::Aster() {
             y = SCREEN_HEIGHT;
             break;
     }
+    this->size = size;
     vx = randF(-3, 4);
     vy = randF(-3, 4);
     rotSpeed = randF(0, 1.5);

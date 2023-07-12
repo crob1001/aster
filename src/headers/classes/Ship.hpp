@@ -25,6 +25,10 @@ class Ship {
         std::vector<Bullet*> blist;
 
     private:
+        enum POWERSTATE {
+            DEFAULT,
+
+        };
         int lives = 5;
         int invin = 0;
         float cooldown = 0;
@@ -44,11 +48,26 @@ void Ship::kill() {
         if (lives <= 0) {
             CURRENTSTATE = LOSE;
         }
-        invin = 20;
+        invin = 60;
     }
 }
 
 void Ship::render(SDL_Renderer *renderer) {
+    // switch(RESOLUTION) {
+    //     case VGA: 
+    //         break;
+    //     case HD:
+    //         break;
+    //     case FULL_HD:
+    //         break;
+    //     case WQHD:
+    //         break;
+    //     case FOUR_K:
+    //         break;
+    //     case FIVE_K:
+    //         break;
+    // }
+
     //add 90 to correct for upsidedown render graph
     SDL_FPoint points[] = {
         {rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)},
