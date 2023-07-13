@@ -1,9 +1,16 @@
 class Bullet {
     public:
-        float x, y;
-        int size = 4;
-
         Bullet(float x, float y, float angle, float vx, float vy);
+
+        float getVX();
+
+        float getVY();
+
+        float getX();
+
+        float getY();
+
+        float getSize();
 
         bool update();
 
@@ -11,7 +18,9 @@ class Bullet {
 
     private:
         void updateVelocity();
-        float velocity = 1;
+        float velocity = .5;
+        float x, y;
+        int size = 5;
         float vx, vy;
         float angle;
 };
@@ -41,6 +50,26 @@ bool Bullet::update() {
     } else {
         return false;
     }
+}
+
+float Bullet::getSize() {
+    return size;
+}
+
+float Bullet::getVX() {
+    return vx;
+}
+
+float Bullet::getVY() {
+    return vy;
+}
+
+float Bullet::getX() {
+    return x;
+}
+
+float Bullet::getY() {
+    return y;
 }
 
 Bullet::Bullet(float x, float y, float angle, float vx, float vy) {

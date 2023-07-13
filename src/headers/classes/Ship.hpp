@@ -6,7 +6,7 @@ class Ship {
 
         void updateAngle(bool right);
 
-        void updateVelocity();
+        void updateVelocity(bool pos);
 
         void shoot();
 
@@ -31,9 +31,10 @@ class Ship {
         };
         int lives = 5;
         int invin = 0;
+        float speedLimit = 10;
         float cooldown = 0;
-        float rotSpeed = 5;
-        float velocity = .1;
+        float rotSpeed = 6;
+        float velocity = .15;
         float angle = -90;
         float size = 10;
         float vx = 0;
@@ -80,7 +81,7 @@ void Ship::render(SDL_Renderer *renderer) {
         i->render(renderer);
     }
 
-    if (invin % 2 == 0){
+    if (invin == 0){
         SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     } else {
         SDL_SetRenderDrawColor(renderer, 0xff, 0x0, 0x0, 0xff);
@@ -108,7 +109,9 @@ void Ship::killB(int i) {
 void Ship::shoot() {
     if (cooldown <= 0) {
         blist.push_back(new Bullet(x, y, angle, vx, vy));
-        cooldown = 10;
+        blist.push_back(new Bullet(x, y, angle + 10, vx, vy));
+        blist.push_back(new Bullet(x, y, angle - 10, vx, vy));
+        cooldown = 15;
     }
 }
 
@@ -120,9 +123,24 @@ void Ship::updateAngle(bool right) {
     }
 }
 
-void Ship::updateVelocity() {
-    vx = vx + cos(angle * dtr) * velocity;
-    vy = vy + sin(angle * dtr) * velocity;
+void Ship::updateVelocity(bool pos) {
+    if (pos){
+        vx = vx + cos(angle * dtr) * velocity;
+        vy = vy + sin(angle * dtr) * velocity;
+    } else {
+        vx = vx - cos(angle * dtr) * velocity;
+        vy = vy - sin(angle * dtr) * velocity;
+    }
+    if (vx > speedLimit) {
+        vx = speedLimit;
+    } else if (vx < -1 * speedLimit) {
+        vx = -1 * speedLimit;
+    }
+    if (vy > speedLimit) {
+        vy = speedLimit;
+    } else if (vy < -1 * speedLimit) {
+        vy = -1 * speedLimit;
+    }
 }
 
 void Ship::update() {

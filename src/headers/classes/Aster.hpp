@@ -7,10 +7,6 @@ class Aster {
 
         void update();
 
-        // void updateVelocity();
-
-        // void shatter();
-
         float getVX();
 
         float getVY();
@@ -101,8 +97,8 @@ Aster::Aster(int size, float x, float y, float vx, float vy) {
     this->x = x;
     this->y = y;
     this->size = size;
-    this->vx = vx * randF(0.5, 1);
-    this->vy = vy * randF(0.5, 1);
+    this->vx = vx + randF(-2, 2);
+    this->vy = vy + randF(-2, 2);
     rotSpeed = randF(0, 1.5);
     angle = randF(0, 361);
 }

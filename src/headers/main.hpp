@@ -11,7 +11,7 @@ int main(int argc, char *args[]) {
         SCREEN_WIDTH = DM.w;
         SCREEN_HEIGHT = DM.h;
 
-        // while (CURRENTSTATE != CLOSED) {
+        while (CURRENTSTATE != CLOSED) {
             SDL_Event e;
 
             Timer fpsTimer;
@@ -61,7 +61,10 @@ int main(int argc, char *args[]) {
                     CURRENTSTATE = CLOSED;
                 }
                 if(currentKeyStates[SDL_SCANCODE_UP]) {
-                    ship->updateVelocity();
+                    ship->updateVelocity(true);
+                }
+                if(currentKeyStates[SDL_SCANCODE_DOWN]) {
+                    ship->updateVelocity(false);
                 }
                 if(currentKeyStates[SDL_SCANCODE_RIGHT]) {
                     ship->updateAngle(true);
@@ -82,11 +85,17 @@ int main(int argc, char *args[]) {
                     aster.push_back(new Aster());
                 }
 
+                ship->update();
+
+                for (auto *i : aster) {
+                    i->update();
+                }
+
                 //collision detect
                 for (int i = 0; i < aster.size(); i++){
                     //ship
                     if (((aster[i]->getX() + aster[i]->getSize()) >= (ship->getX() + ship->getSize()) && (aster[i]->getX() -aster[i]->getSize()) <= (ship->getX() - ship->getSize()))) {
-                        if (((aster[i]->getY() + aster[i]->getSize()) >= (ship->getY() + ship->getSize()) && (aster[i]->getY() - aster[i]->getSize()) <= (ship->getY() - ship->getSize()))) {
+                        if (SACollision(ship, aster[i])) {
                             ship->kill();
                             delete aster[i];
                             aster.erase(aster.begin() + i);
@@ -94,38 +103,46 @@ int main(int argc, char *args[]) {
                     }
                     for (int j = 0; j < ship->blist.size(); j++) {
                         //aster
-                        if (((aster[i]->getX() + aster[i]->getSize()) >= (ship->blist[j]->x + ship->blist[j]->size) && (aster[i]->getX() - aster[i]->getSize()) <= (ship->blist[j]->x - ship->blist[j]->size))) {
-                            if (((aster[i]->getY() + aster[i]->getSize()) >= (ship->blist[j]->y + ship->blist[j]->size) && (aster[i]->getY() - aster[i]->getSize()) <= (ship->blist[j]->y - ship->blist[j]->size))) {
-                                ship->killB(j);
-                                //no clue why but looping breaks this
-                                if (aster[i]->getSize() == 50) {
-                                    aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                    aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                    aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));                                    
-                                } 
-                                if (aster[i]->getSize() == 40) {
-                                    aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                    aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                    aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                }
-                                if (aster[i]->getSize() == 30) {
-                                    aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                    aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                    aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), aster[i]->getVX(), aster[i]->getVY()));
-                                }
-                                delete aster[i];
-                                aster.erase(aster.begin() + i);
+                        if (ABCollision(aster[i], ship->blist[j])) {
+                            ship->killB(j);
+                            //no clue why but looping breaks this
+                            if (aster[i]->getSize() == 50) {
+                                aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                                aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                                aster.push_back(new Aster(40, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                            } 
+                            if (aster[i]->getSize() == 40) {
+                                aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                                aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                                aster.push_back(new Aster(30, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
                             }
+
+                            if (aster[i]->getSize() == 30) {
+
+                                aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                                aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                                aster.push_back(new Aster(20, aster[i]->getX(), aster[i]->getY(), 
+                                aster[i]->getVX() + (ship->blist[j]->getVX() / (ship->blist[j]->getSize() * ship->blist[j]->getSize())), aster[i]->getVY() + (ship->blist[j]->getVY() / (ship->blist[j]->getSize() * ship->blist[j]->getSize()))));
+                            } 
+                            if (aster[i]->getSize() == 20) {
+                                if ((int)randF(1,10) == 6) {
+                                    ;
+                                }
+                            }
+                            delete aster[i];
+                            aster.erase(aster.begin() + i);
                         }
                     }
                 }
 
-                ship->update();
-
-                for (auto *i : aster) {
-                    i->update();
-                }
-                
                 window.clearRenderer();
 
                 SDL_SetRenderDrawColor(window.rendererP, 0xff, 0xff, 0xff, 0xff);
@@ -147,7 +164,7 @@ int main(int argc, char *args[]) {
                 }
             }
         }
-    // }
+    }
     close();
     return 0;
 }

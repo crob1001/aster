@@ -3,6 +3,7 @@
 #include <sstream>
 #include <math.h>
 #include <random>
+#include <iostream>
 
 //SDL
 #include <SDL2/SDL.h>
@@ -27,4 +28,5 @@ Window window;
 // functions
 #include "headers/functions/init.hpp"
 #include "headers/functions/close.hpp"
+#include "headers/functions/collision.hpp"
 #include "headers/main.hpp"
