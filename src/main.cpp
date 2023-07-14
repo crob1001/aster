@@ -19,6 +19,7 @@
 #include "headers/classes/Window.hpp"
 #include "headers/classes/Timer.hpp"
 #include "headers/classes/Bullet.hpp"
+#include "headers/classes/Powerups.hpp"
 #include "headers/classes/Ship.hpp"
 #include "headers/classes/Aster.hpp"
 

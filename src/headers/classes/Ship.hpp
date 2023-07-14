@@ -12,11 +12,17 @@ class Ship {
 
         void killB(int i);
 
+        float getVX();
+
+        float getVY();
+
         float getX();
 
         float getY();
 
         float getSize();
+
+        bool isInvin();
 
         void render(SDL_Renderer *renderer);
 
@@ -31,10 +37,11 @@ class Ship {
         };
         int lives = 5;
         int invin = 0;
+        bool hasInvin = false;
         float speedLimit = 10;
         float cooldown = 0;
         float rotSpeed = 6;
-        float velocity = .15;
+        float velocity = .06;
         float angle = -90;
         float size = 10;
         float vx = 0;
@@ -44,31 +51,17 @@ class Ship {
 };
 
 void Ship::kill() {
-    if (invin <= 0) {
+    if (!invin) {
         lives -= 1;
         if (lives <= 0) {
             CURRENTSTATE = LOSE;
         }
         invin = 60;
+        hasInvin = true;
     }
 }
 
 void Ship::render(SDL_Renderer *renderer) {
-    // switch(RESOLUTION) {
-    //     case VGA: 
-    //         break;
-    //     case HD:
-    //         break;
-    //     case FULL_HD:
-    //         break;
-    //     case WQHD:
-    //         break;
-    //     case FOUR_K:
-    //         break;
-    //     case FIVE_K:
-    //         break;
-    // }
-
     //add 90 to correct for upsidedown render graph
     SDL_FPoint points[] = {
         {rotatex(angle + 90, x, y - size, x, y), rotatey(angle + 90, x, y - size, x, y)},
@@ -81,7 +74,7 @@ void Ship::render(SDL_Renderer *renderer) {
         i->render(renderer);
     }
 
-    if (invin == 0){
+    if (!hasInvin){
         SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
     } else {
         SDL_SetRenderDrawColor(renderer, 0xff, 0x0, 0x0, 0xff);
@@ -106,12 +99,27 @@ void Ship::killB(int i) {
     blist.erase(blist.begin() + i);
 }
 
+float Ship::getVX(){
+    return vx;
+}
+
+float Ship::getVY(){
+    return vy;
+}
+
+bool Ship::isInvin() {
+    return hasInvin;
+}
+
 void Ship::shoot() {
     if (cooldown <= 0) {
         blist.push_back(new Bullet(x, y, angle, vx, vy));
         blist.push_back(new Bullet(x, y, angle + 10, vx, vy));
         blist.push_back(new Bullet(x, y, angle - 10, vx, vy));
         cooldown = 15;
+    }
+    while (blist.size() > 15) {
+        killB(0);
     }
 }
 
@@ -158,6 +166,11 @@ void Ship::update() {
     
     if (invin > 0) {
         invin -= 1;
+    }
+     
+    if (invin <= 0) {
+        invin = 0;
+        hasInvin = false;
     }
 
     for (int i = 0; i < blist.size(); i++) {
