@@ -3,13 +3,13 @@ int main(int argc, char *args[]) {
         printf("main/init\n");
     } else {
 
-        // SDL_SetWindowFullscreen(window.windowP, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        // SDL_MaximizeWindow(window.windowP);
+        SDL_SetWindowFullscreen(window.windowP, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        SDL_MaximizeWindow(window.windowP);
 
-        // SDL_DisplayMode DM;
-        // SDL_GetCurrentDisplayMode(0, &DM);
-        // SCREEN_WIDTH = DM.w;
-        // SCREEN_HEIGHT = DM.h;
+        SDL_DisplayMode DM;
+        SDL_GetCurrentDisplayMode(0, &DM);
+        SCREEN_WIDTH = DM.w;
+        SCREEN_HEIGHT = DM.h;
 
         // while (CURRENTSTATE != CLOSED) {
             SDL_Event e;

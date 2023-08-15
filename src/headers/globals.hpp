@@ -54,5 +54,5 @@ SDL_Color backgroundColor = {0x25, 0x19, 0x3c, 0xfe};
 
 STATES CURRENTSTATE = PAUSED;
 
-int starAmmt = 15;
+int starAmmt = 30;
 SDL_Point stars[15];
