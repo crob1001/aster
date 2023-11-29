@@ -1,4 +1,4 @@
-int main(int argc, char *args[]) {
+int WinMain(int argv, char** args) {
     if (!init()) {
         printf("main/init\n");
     } else {
